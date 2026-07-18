@@ -1,0 +1,491 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+* {
+  font-family: Outfit;
+}
+
+/* =========================================================
+   THEME TOKENS
+   A richer teal → cyan medical palette, remapped onto the
+   existing blue/indigo utility classes so no JSX changes
+   are required anywhere in the app.
+   ========================================================= */
+@theme {
+  --color-primary: #0d9488;        /* Teal 600 */
+  --color-primary-hover: #0f766e;  /* Teal 700 */
+
+  --color-blue-50:  #f0fdfa;
+  --color-blue-100: #ccfbf1;
+  --color-blue-200: #99f6e4;
+  --color-blue-500: #14b8a6;
+  --color-blue-600: #0d9488;
+  --color-blue-700: #0f766e;
+
+  --color-indigo-50:  #ecfeff;
+  --color-indigo-100: #cffafe;
+  --color-indigo-200: #a5f3fc;
+  --color-indigo-500: #06b6d4;
+  --color-indigo-600: #0891b2;
+  --color-indigo-700: #0e7490;
+}
+
+:root {
+  --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #0d9488 45%, #0891b2 100%);
+  --gradient-primary-alt: linear-gradient(120deg, #0d9488, #06b6d4, #0d9488);
+  --gradient-soft: linear-gradient(160deg, #f0fdfa 0%, #ecfeff 100%);
+  --shadow-soft: 0 10px 30px -10px rgba(13, 148, 136, 0.25);
+  --shadow-glow: 0 0 0 4px rgba(20, 184, 166, 0.18);
+  --shadow-card: 0 4px 16px -4px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 20px 40px -12px rgba(13, 148, 136, 0.30);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fbfdfd;
+}
+
+/* =========================================================
+   GLOBAL TRANSITIONS
+   ========================================================= */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Focus rings everywhere, styled instead of removed */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-glow);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   SCROLLBAR — slim, styled instead of hidden
+   ========================================================= */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #14b8a6 #eef2f2;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #eef2f2;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-hover);
+}
+
+/* =========================================================
+   KEYFRAMES
+   ========================================================= */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-150%) skewX(-15deg); }
+  100% { transform: translateX(250%) skewX(-15deg); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+  50%      { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+}
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes underlineGrow {
+  from { width: 0; }
+  to   { width: 46px; }
+}
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(20px, -20px) scale(1.08); }
+  66%      { transform: translate(-15px, 15px) scale(0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   PAGE ENTRANCE
+   ========================================================= */
+main, .mx-4.sm\:mx-\[10\%\] > div:not(.sticky) {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* =========================================================
+   NAVBAR — glassy sticky bar
+   ========================================================= */
+.sticky.top-0.z-50 {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(13, 148, 136, 0.08), 0 8px 24px -16px rgba(13, 148, 136, 0.25);
+}
+
+.sticky.top-0.z-50 img.cursor-pointer {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sticky.top-0.z-50 img.cursor-pointer:hover {
+  transform: scale(1.05) rotate(-1deg);
+}
+
+/* Nav links animated underline */
+.sticky.top-0.z-50 ul li {
+  position: relative;
+  transition: color 0.25s ease;
+}
+.sticky.top-0.z-50 ul a {
+  position: relative;
+}
+.sticky.top-0.z-50 ul a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0%;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sticky.top-0.z-50 ul a:hover::after,
+.sticky.top-0.z-50 ul a.active::after {
+  width: 100%;
+}
+.sticky.top-0.z-50 ul a:hover li {
+  color: var(--color-primary);
+}
+.active hr {
+  display: block;
+  animation: underlineGrow 0.35s ease forwards;
+  background: var(--gradient-primary) !important;
+}
+
+/* Profile dropdown */
+.min-w-48.bg-stone-100 {
+  animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: var(--shadow-card-hover);
+  backdrop-filter: blur(6px);
+}
+.min-w-48.bg-stone-100 p {
+  transition: color 0.2s ease, transform 0.2s ease, padding 0.2s ease;
+}
+.min-w-48.bg-stone-100 p:hover {
+  transform: translateX(4px);
+  color: var(--color-primary) !important;
+}
+
+@media (max-width: 740px) {
+  .active p {
+    color: #fff;
+    background: var(--gradient-primary);
+  }
+}
+
+/* =========================================================
+   BUTTONS / PILLS — gradient fill + shine sweep
+   ========================================================= */
+button.bg-primary.text-white,
+a.bg-primary.text-white,
+button[class*="bg-primary"][class*="text-white"] {
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+}
+button.bg-primary.text-white::before,
+a.bg-primary.text-white::before,
+button[class*="bg-primary"][class*="text-white"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-150%) skewX(-15deg);
+}
+button.bg-primary.text-white:hover::before,
+a.bg-primary.text-white:hover::before,
+button[class*="bg-primary"][class*="text-white"]:hover::before {
+  animation: shimmerSweep 0.9s ease;
+}
+button.bg-primary.text-white:hover,
+a.bg-primary.text-white:hover,
+button[class*="bg-primary"][class*="text-white"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -8px rgba(13, 148, 136, 0.45);
+  background-position: 100% 0%;
+}
+button.bg-primary.text-white:active,
+button[class*="bg-primary"][class*="text-white"]:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+/* Secondary pill (e.g. "More" button) */
+.bg-blue-50.text-gray-600.rounded-full {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.bg-blue-50.text-gray-600.rounded-full:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+/* =========================================================
+   HERO — animated gradient + floating illustration + glow blobs
+   ========================================================= */
+.bg-primary.rounded-lg {
+  position: relative;
+  overflow: hidden;
+  background: var(--gradient-primary-alt);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
+}
+.bg-primary.rounded-lg::before,
+.bg-primary.rounded-lg::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-primary.rounded-lg::before {
+  width: 220px;
+  height: 220px;
+  top: -60px;
+  right: -40px;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+.bg-primary.rounded-lg::after {
+  width: 140px;
+  height: 140px;
+  bottom: -40px;
+  left: 10%;
+  animation: blobFloat 11s ease-in-out infinite reverse;
+}
+.bg-primary.rounded-lg > div,
+.bg-primary.rounded-lg > * {
+  position: relative;
+  z-index: 1;
+}
+.bg-primary.rounded-lg img[src*="header_img"],
+.bg-primary.rounded-lg .relative img {
+  animation: floatY 5s ease-in-out infinite;
+}
+.bg-primary.rounded-lg img[src*="group_profiles"] {
+  transition: transform 0.4s ease;
+}
+.bg-primary.rounded-lg img[src*="group_profiles"]:hover {
+  transform: scale(1.06);
+}
+
+/* =========================================================
+   SPECIALITY MENU
+   ========================================================= */
+#speciality h1 {
+  position: relative;
+  padding-bottom: 14px;
+}
+#speciality h1::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 4px;
+  width: 46px;
+  transform: translateX(-50%);
+  background: var(--gradient-primary);
+  border-radius: 4px;
+  animation: underlineGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+#speciality > div > div {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#speciality > div > div:nth-child(1) { animation-delay: 0.05s; }
+#speciality > div > div:nth-child(2) { animation-delay: 0.10s; }
+#speciality > div > div:nth-child(3) { animation-delay: 0.15s; }
+#speciality > div > div:nth-child(4) { animation-delay: 0.20s; }
+#speciality > div > div:nth-child(5) { animation-delay: 0.25s; }
+#speciality > div > div:nth-child(6) { animation-delay: 0.30s; }
+#speciality > div > div:nth-child(7) { animation-delay: 0.35s; }
+#speciality > div > div:nth-child(8) { animation-delay: 0.40s; }
+
+#speciality > div > div img {
+  border-radius: 9999px;
+  background: var(--gradient-soft);
+  padding: 10px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+}
+#speciality > div > div:hover img {
+  transform: scale(1.12) rotate(4deg);
+  box-shadow: var(--shadow-card-hover);
+}
+#speciality > div > div:hover p {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* =========================================================
+   DOCTOR CARDS (frontend) — stagger in + rich hover
+   ========================================================= */
+.border-blue-200.rounded-xl.overflow-hidden {
+  box-shadow: var(--shadow-card);
+  animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  background: #fff;
+}
+.border-blue-200.rounded-xl.overflow-hidden:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-primary);
+}
+.border-blue-200.rounded-xl.overflow-hidden img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.border-blue-200.rounded-xl.overflow-hidden:hover img {
+  transform: scale(1.08);
+}
+
+[class*="auto-fill"] > div:nth-child(1) { animation-delay: 0.04s; }
+[class*="auto-fill"] > div:nth-child(2) { animation-delay: 0.08s; }
+[class*="auto-fill"] > div:nth-child(3) { animation-delay: 0.12s; }
+[class*="auto-fill"] > div:nth-child(4) { animation-delay: 0.16s; }
+[class*="auto-fill"] > div:nth-child(5) { animation-delay: 0.20s; }
+[class*="auto-fill"] > div:nth-child(6) { animation-delay: 0.24s; }
+[class*="auto-fill"] > div:nth-child(7) { animation-delay: 0.28s; }
+[class*="auto-fill"] > div:nth-child(8) { animation-delay: 0.32s; }
+[class*="auto-fill"] > div:nth-child(9) { animation-delay: 0.36s; }
+[class*="auto-fill"] > div:nth-child(10) { animation-delay: 0.40s; }
+
+/* Availability dot pulse */
+.border-blue-200.rounded-xl p.bg-green-500,
+.rounded-xl p[class*="bg-green-500"] {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* =========================================================
+   FORMS — Login / Sign up
+   ========================================================= */
+form [class*="shadow-lg"] {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+form [class*="shadow-lg"]:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"],
+form select,
+form textarea {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="number"]:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+  outline: none;
+}
+
+form button[type="submit"] {
+  letter-spacing: 0.02em;
+}
+
+form span.text-primary.underline,
+span.text-primary.underline {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+form span.text-primary.underline:hover {
+  color: var(--color-primary-hover);
+}
+
+/* =========================================================
+   SECTION HEADINGS — subtle gradient accent underline
+   ========================================================= */
+h1.text-3xl.font-medium {
+  position: relative;
+  padding-bottom: 12px;
+}
+h1.text-3xl.font-medium::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 4px;
+  width: 46px;
+  transform: translateX(-50%);
+  background: var(--gradient-primary);
+  border-radius: 4px;
+}
+
+/* Filter chips (Doctors page) */
+p[class*="border-gray-300"][class*="rounded"] {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+p[class*="border-gray-300"][class*="rounded"]:hover {
+  transform: translateX(3px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Footer */
+img[src*="logo.svg"] {
+  transition: transform 0.3s ease;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+}
