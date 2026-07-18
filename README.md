@@ -1,3 +1,4 @@
+link : https://hospitalmanagement-frontend-m8q0.onrender.com
 # Prescripto - Hospital Management System
 A modern MERN stack hospital management and doctor appointment booking system. The project is split into three main components: a client facing frontend, an admin/doctor portal, and a backend API.
 ## Project Structure
